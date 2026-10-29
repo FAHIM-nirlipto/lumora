@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Lumora — a social network that gives time back. The best of LinkedIn, Twitter, Telegram, Facebook and Instagram, with none of the time-wasting parts.">
+<title>Lumora</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  /* Layout: a warm editorial reveal built around one live, interactive feed preview */
+  :root{
+    --bg:#F7F6F2; --surface:#FFFFFF; --surface-2:#F1EFE8;
+    --ink:#1A1713; --muted:#6C665C; --line:#E6E2D8;
+    --accent:#E58A00; --accent-ink:#241602; --accent-soft:#FBE8C6;
+    --violet:#5B4BE0; --mint:#0E8F6E;
+    --glow:rgba(229,138,0,.28);
+    --shadow:0 1px 2px rgba(26,23,19,.04),0 12px 34px rgba(26,23,19,.09);
+    --font-display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+    --font-body:"Instrument Sans",system-ui,sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    --r:16px; --maxw:1120px;
+    padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#141210; --surface:#201C17; --surface-2:#191611;
+    --ink:#F3EFE7; --muted:#A79F93; --line:#322C24;
+    --accent:#F7B23D; --accent-ink:#241602; --accent-soft:#3A2D16;
+    --violet:#9F91FF; --mint:#43C9A3;
+    --glow:rgba(247,178,61,.22);
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#141210; --surface:#201C17; --surface-2:#191611;
+    --ink:#F3EFE7; --muted:#A79F93; --line:#322C24;
+    --accent:#F7B23D; --accent-ink:#241602; --accent-soft:#3A2D16;
+    --violet:#9F91FF; --mint:#43C9A3;
+    --glow:rgba(247,178,61,.22);
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:var(--font-display);font-weight:700;line-height:1.04;text-wrap:balance;margin:0}
+  p{margin:0}
+  a{color:inherit}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  .eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:.95rem;padding:.7rem 1.15rem;border-radius:999px;background:var(--accent);color:var(--accent-ink);transition:transform .15s ease,box-shadow .2s ease;text-decoration:none}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px var(--glow)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{box-shadow:none;border-color:var(--accent)}
+  :focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+  /* top bar */
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--bg)}
+  header.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;gap:1rem;padding-block:.7rem}
+  .brand{display:flex;align-items:center;gap:.55rem;font-family:var(--font-display);font-weight:800;font-size:1.25rem;letter-spacing:-.01em}
+  .mark{width:28px;height:28px;flex:0 0 auto}
+  .nav .spacer{flex:1}
+  .nav .chip{font-family:var(--font-mono);font-size:.68rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.3rem .6rem}
+  .theme-btn{background:none;border:1px solid var(--line);border-radius:999px;width:38px;height:38px;cursor:pointer;color:var(--ink);font-size:1rem;display:grid;place-items:center}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden}
+  .hero .wrap{padding-top:clamp(2.6rem,7vw,5rem);padding-bottom:clamp(2rem,5vw,3.4rem);position:relative;z-index:1}
+  .orb{position:absolute;border-radius:50%;filter:blur(46px);opacity:.55;z-index:0;pointer-events:none}
+  .orb.a{width:380px;height:380px;background:radial-gradient(circle,var(--glow),transparent 70%);top:-120px;right:-80px}
+  .orb.b{width:300px;height:300px;background:radial-gradient(circle,color-mix(in srgb,var(--violet) 40%,transparent),transparent 70%);bottom:-140px;left:-100px;opacity:.4}
+  h1.title{font-size:clamp(2.7rem,8.5vw,5.4rem);letter-spacing:-.03em}
+  .title .lit{background:linear-gradient(100deg,var(--accent),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(1.05rem,2.3vw,1.4rem);color:var(--muted);max-width:40ch;margin-top:1.1rem}
+  .hero-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.6rem}
+  .say{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);margin-top:1.3rem}
+  .say b{color:var(--ink);font-weight:600}
+
+  /* section shell */
+  section{padding-block:clamp(2.6rem,6vw,4.6rem)}
+  .sec-head{max-width:46ch}
+  .sec-head h2{font-size:clamp(1.7rem,4.5vw,2.7rem);letter-spacing:-.02em;margin-top:.5rem}
+  .sec-head p{color:var(--muted);margin-top:.8rem;font-size:1.05rem}
+
+  /* ===== live app demo ===== */
+  .demo{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .app{max-width:860px;margin:1.8rem auto 0;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+  .app-top{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-bottom:1px solid var(--line)}
+  .app-top .brand{font-size:1.05rem}
+  .budget{margin-left:auto;display:flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:.68rem;color:var(--muted)}
+  .meter{width:84px;height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+  .meter i{display:block;height:100%;width:12%;background:linear-gradient(90deg,var(--mint),var(--accent));transition:width .5s ease}
+  .tabs{display:flex;gap:.15rem;padding:.5rem .6rem;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;border:none;background:none;cursor:pointer;color:var(--muted);font-family:var(--font-body);font-weight:600;font-size:.9rem;padding:.5rem .85rem;border-radius:999px;display:flex;gap:.4rem;align-items:center;transition:.15s}
+  .tab .ico{font-size:1rem}
+  .tab[aria-selected="true"]{background:var(--accent-soft);color:var(--ink)}
+  .feed{padding:1rem;display:flex;flex-direction:column;gap:.85rem;min-height:340px}
+  .feed-note{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+  .pill{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.04em;padding:.2rem .5rem;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted)}
+  .pill.good{color:var(--mint);border-color:color-mix(in srgb,var(--mint) 40%,var(--line))}
+  .card{border:1px solid var(--line);border-radius:14px;padding:.95rem 1rem;background:var(--surface);display:flex;flex-direction:column;gap:.55rem;animation:rise .45s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.card{animation:none}}
+  .who{display:flex;align-items:center;gap:.6rem;font-size:.9rem;min-width:0}
+  .ava{width:34px;height:34px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;font-family:var(--font-display);font-weight:700;color:#fff;font-size:.9rem}
+  .who .name{font-weight:700}
+  .who .meta{color:var(--muted);font-size:.78rem}
+  .who .verify{color:var(--mint);font-size:.8rem}
+  .ctext{font-size:.98rem;min-width:0}
+  .ctext .tag{color:var(--violet);font-weight:600}
+  .learncard{background:linear-gradient(180deg,color-mix(in srgb,var(--accent-soft) 60%,var(--surface)),var(--surface))}
+  .steps{margin:.2rem 0 0;padding-left:1.1rem;font-size:.92rem;color:var(--muted);display:flex;flex-direction:column;gap:.25rem}
+  .cfoot{display:flex;gap:1.1rem;align-items:center;font-size:.8rem;color:var(--muted);flex-wrap:wrap}
+  .react{display:flex;align-items:center;gap:.35rem;background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--font-body);font-size:.8rem;padding:.2rem 0}
+  .react:hover{color:var(--accent)}
+  .react .n{font-variant-numeric:tabular-nums}
+  .worth{margin-left:auto;font-family:var(--font-mono);font-size:.68rem;color:var(--mint)}
+  .media{border-radius:12px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/9;max-width:100%}
+  .media svg{width:100%;height:100%;display:block}
+  .done{text-align:center;color:var(--muted);padding:1.6rem 1rem;display:flex;flex-direction:column;gap:.5rem;align-items:center}
+  .done .big{font-family:var(--font-display);font-weight:700;font-size:1.2rem;color:var(--ink)}
+
+  /* best-of grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1.8rem}
+  .kcard{border:1px solid var(--line);border-radius:var(--r);padding:1.15rem;background:var(--surface);display:flex;flex-direction:column;gap:.7rem}
+  .kcard h3{font-size:1.1rem;display:flex;align-items:center;gap:.5rem}
+  .kcard .src{font-family:var(--font-mono);font-size:.68rem;color:var(--muted)}
+  .kept,.dropped{display:flex;gap:.55rem;font-size:.92rem;align-items:flex-start}
+  .kept .m{color:var(--mint);font-weight:700;flex:0 0 auto}
+  .dropped{color:var(--muted)}
+  .dropped .m{color:#c0463a;font-weight:700;flex:0 0 auto}
+  :root[data-theme="dark"] .dropped .m{color:#ef7a6e}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dropped .m{color:#ef7a6e}}
+
+  /* principles */
+  .principles{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .prow{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-top:1.6rem}
+  .pitem{display:flex;flex-direction:column;gap:.5rem}
+  .pnum{font-family:var(--font-mono);font-size:.72rem;color:var(--accent);font-weight:600}
+  .pitem h3{font-size:1.15rem}
+  .pitem p{color:var(--muted);font-size:.95rem}
+
+  footer{padding-block:2.4rem;text-align:center;color:var(--muted);font-size:.85rem;display:flex;flex-direction:column;gap:.6rem;align-items:center}
+  footer .brand{justify-content:center;color:var(--ink)}
+  .disc{font-family:var(--font-mono);font-size:.68rem;max-width:44ch}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <span class="brand">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E58A00"/><stop offset="1" stop-color="#5B4BE0"/></linearGradient></defs><circle cx="16" cy="16" r="13" fill="none" stroke="url(#g)" stroke-width="2.4"/><circle cx="16" cy="16" r="5" fill="url(#g)"/></svg>
+      Lumora
+    </span>
+    <span class="chip">beta · invite-light</span>
+    <span class="spacer"></span>
+    <a class="btn ghost" href="#demo">Try the feed</a>
+    <button class="theme-btn" id="theme" aria-label="Toggle theme" title="Toggle theme">◐</button>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="orb a"></span><span class="orb b"></span>
+  <div class="wrap">
+    <span class="eyebrow">A social network with a spine</span>
+    <h1 class="title">Social media that<br><span class="lit">gives time back.</span></h1>
+    <p class="lede">Lumora keeps the good parts of the feeds you already use — and quietly drops the parts built to trap you. Learn something, laugh once, connect for real, then it tells you you're done.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#demo">Open a live feed ↓</a>
+      <a class="btn ghost" href="#best">What we kept & dropped</a>
+    </div>
+    <p class="say"><b>Lu·mo·ra</b> — <i>from</i> lumen, light + aura. The glow of time well spent.</p>
+  </div>
+</section>
+
+<section class="demo" id="demo">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Live preview — tap around</span>
+      <h2>One feed, five honest modes.</h2>
+      <p>No infinite scroll, no rage-bait, no hidden ranking. Switch a mode, open posts, and watch your daily "well-spent" meter fill — then stop you.</p>
+    </div>
+
+    <div class="app" role="region" aria-label="Lumora feed preview">
+      <div class="app-top">
+        <span class="brand"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="url(#g)" stroke-width="2.4"/><circle cx="16" cy="16" r="5" fill="url(#g)"/></svg>Lumora</span>
+        <span class="budget">Today <span class="meter"><i id="meterFill"></i></span> <span id="meterTxt">6 min</span></span>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Feed modes" id="tabs"></div>
+      <div class="feed" id="feed" role="tabpanel"></div>
+    </div>
+  </div>
+</section>
+
+<section id="best">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The honest inheritance</span>
+      <h2>Best of each. None of the worst.</h2>
+      <p>Every big platform got one thing right and one thing wrong. Lumora keeps the first and refuses the second — on purpose, in the product, not in a blog post.</p>
+    </div>
+    <div class="grid" id="bestGrid"></div>
+  </div>
+</section>
+
+<section class="principles">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it stays healthy</span>
+      <h2>Four rules we can't quietly break.</h2>
+      <p>These aren't settings buried in a menu. They're how the whole thing is built, so the incentives can't drift back toward the slot machine.</p>
+    </div>
+    <div class="prow" id="prin"></div>
+  </div>
+</section>
+
+<footer>
+  <span class="brand"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="var(--accent)" stroke-width="2.4"/><circle cx="16" cy="16" r="5" fill="var(--accent)"/></svg> Lumora</span>
+  <p>Learn a little. Laugh once. Connect for real. Then go live your life.</p>
+  <p class="disc">Concept demo. Lumora is a product idea with sample content, not a running service — the feed above is illustrative.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- theme toggle ---------- */
+  var root=document.documentElement, tb=document.getElementById('theme');
+  try{var s=localStorage.getItem('lumora-theme'); if(s)root.setAttribute('data-theme',s);}catch(e){}
+  tb.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    var mql=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    var next = cur? (cur==='dark'?'light':'dark') : (mql?'light':'dark');
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('lumora-theme',next);}catch(e){}
+  });
+
+  /* ---------- feed data ---------- */
+  var AV=['#E58A00','#5B4BE0','#0E8F6E','#C0463A','#2F6FEB','#B5179E'];
+  function av(i){return AV[i%AV.length];}
+
+  var MODES=[
+    {key:'spark', ico:'✦', name:'Spark', note:'Short thoughts, quality over volume. One post, one idea.'},
+    {key:'learn', ico:'◆', name:'Learn', note:'Bite-size lessons from people who actually do the thing.'},
+    {key:'circles', ico:'❖', name:'Circles', note:'Small topic rooms. Calm chat, no 2,000-person shouting.'},
+    {key:'moments', ico:'❉', name:'Moments', note:'Visual posts — no like counts, no filters race.'},
+    {key:'nearby', ico:'❂', name:'Nearby', note:'Real things happening around you this week.'}
+  ];
+
+  var POSTS={
+    spark:[
+      {n:'Dr. Anwara H.',m:'epidemiologist · 2h',v:true,i:0,t:'If you only change one habit this month, make it sleep. Everything downstream — mood, focus, immunity — is cheaper to fix once you sleep. Not a hack. Just the base layer.',r:['141 found useful','23 saved'],worth:'~30 sec read'},
+      {n:'Tanvir R.',m:'builds bridges · 4h',i:4,t:'A cable-stayed bridge isn\'t held up by the cables you see — it\'s the tension balance on both sides of each tower. Symmetry is the whole trick.',r:['88 found useful','12 saved'],worth:'~20 sec read'},
+      {n:'Mei Lin',m:'illustrator · 6h',i:5,t:'Posting one finished sketch a day for 100 days taught me more than two years of "someday I\'ll get good". Reps beat plans.',r:['210 found useful','44 saved'],worth:'~15 sec read'}
+    ],
+    learn:[
+      {learn:true,n:'Kamal — data teacher',m:'Lesson · 3 min',v:true,i:1,t:'Read any chart in 30 seconds:',steps:['1. Title & units — what am I even looking at?','2. Axes — where does the scale start? (watch for cut-off zeros)','3. The one line that matters — ignore the decoration','4. Ask: who made this, and what do they want me to feel?'],r:['512 learned this','190 saved'],worth:'3 min · +1 skill'},
+      {learn:true,n:'Sadia — frontend dev',m:'Lesson · 2 min',i:2,t:'CSS Flexbox, the only 3 lines you memorize first:',steps:['display:flex — turn on the row','justify-content — space along the row','align-items — line up across the row'],r:['377 learned this','260 saved'],worth:'2 min · +1 skill'}
+    ],
+    circles:[
+      {circle:true,n:'Home Cooks BD',m:'412 members · active now',i:2,t:'Room rule: share the recipe, not the lecture. Today\'s thread: 15-minute dinners that still feel like a treat. Drop yours ↓'},
+      {circle:true,n:'Thesis Survivors',m:'1.2k members · calm',i:1,t:'Weekly check-in: what\'s one small thing you finished this week? No "I did nothing" allowed — a sentence counts.'},
+      {circle:true,n:'Dhaka Cyclists',m:'860 members',i:3,t:'Sunrise ride Friday, 5:50am, Hatirjheel north gate. Slow pace, we wait for everyone. New riders welcome.'}
+    ],
+    moments:[
+      {media:'sun',n:'Rafi',m:'Cox\'s Bazar · today',i:0,t:'First light before the crowd. No filter — the sky did the work.',worth:'reactions, not scores'},
+      {media:'plant',n:'Nabila',m:'balcony garden · 1d',i:2,t:'Month 3 of the chili plant nobody thought would make it. Small wins count.',worth:'reactions, not scores'}
+    ],
+    nearby:[
+      {circle:true,n:'Free Science Fair',m:'Sat · Science Museum · 2.1 km',i:1,t:'Hands-on robotics & telescope viewing for all ages. Entry free, bring curiosity.'},
+      {circle:true,n:'Community Book Swap',m:'Sun · Dhanmondi Lake · 1.3 km',i:5,t:'Bring a book you loved, leave with one you haven\'t read. Tea on the house.'},
+      {circle:true,n:'Beginner Bangla Calligraphy',m:'Wed eve · Public Library · 0.8 km',i:3,t:'Free 1-hour intro. Materials provided. 12 seats left.'}
+    ]
+  };
+
+  var opened={}, openedCount=0, DAILY=12;
+
+  var feedEl=document.getElementById('feed');
+  var tabsEl=document.getElementById('tabs');
+  var meterFill=document.getElementById('meterFill');
+  var meterTxt=document.getElementById('meterTxt');
+
+  MODES.forEach(function(mode,idx){
+    var b=document.createElement('button');
+    b.className='tab'; b.setAttribute('role','tab');
+    b.setAttribute('aria-selected', idx===0?'true':'false');
+    b.innerHTML='<span class="ico" aria-hidden="true">'+mode.ico+'</span>'+mode.name;
+    b.addEventListener('click',function(){select(mode.key,b);});
+    b.dataset.key=mode.key;
+    tabsEl.appendChild(b);
+  });
+
+  function esc(s){return s.replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function fmt(t){return esc(t).replace(/#(\w+)/g,'<span class="tag">#$1</span>');}
+
+  function mediaSVG(kind){
+    if(kind==='sun'){
+      return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7B23D"/><stop offset=".6" stop-color="#E58A00"/><stop offset="1" stop-color="#5B4BE0"/></linearGradient></defs><rect width="160" height="90" fill="url(#sk)"/><circle cx="80" cy="60" r="20" fill="#FFF3D6" opacity=".9"/><rect y="66" width="160" height="24" fill="#1A1713" opacity=".35"/></svg>';
+    }
+    return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="90" fill="#0E8F6E" opacity=".18"/><rect x="72" y="46" width="16" height="40" rx="3" fill="#8a5a2b"/><path d="M80 50 C58 44 54 20 80 24 C106 20 102 44 80 50Z" fill="#0E8F6E"/><path d="M80 60 C64 56 60 40 80 42 C100 40 96 56 80 60Z" fill="#43C9A3"/></svg>';
+  }
+
+  function render(key){
+    var list=POSTS[key]||[];
+    var mode=MODES.filter(function(m){return m.key===key;})[0];
+    feedEl.innerHTML='';
+    var note=document.createElement('div');
+    note.className='feed-note';
+    note.innerHTML='<span class="pill good">✓ chronological</span><span class="pill">no ads</span>'+esc(mode.note);
+    feedEl.appendChild(note);
+
+    list.forEach(function(p,i){
+      var c=document.createElement('article');
+      c.className='card'+(p.learn?' learncard':'');
+      c.style.animationDelay=(i*55)+'ms';
+      var head='<div class="who"><span class="ava" style="background:'+av(p.i)+'">'+esc(p.n[0])+'</span>'+
+        '<span style="min-width:0"><div class="name">'+esc(p.n)+(p.v?' <span class="verify" title="verified expertise">✓</span>':'')+'</div>'+
+        '<div class="meta">'+esc(p.m)+'</div></span></div>';
+      var body='<div class="ctext">'+fmt(p.t)+'</div>';
+      if(p.steps){ body+='<ul class="steps">'+p.steps.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul>'; }
+      if(p.media){ body='<div class="media">'+mediaSVG(p.media)+'</div>'+body; }
+      var foot='<div class="cfoot">';
+      if(p.circle){
+        foot+='<button class="react">💬 Join the room</button><span class="worth">calm by design</span>';
+      }else{
+        (p.r||['found useful','saved']).forEach(function(r,ri){
+          var parts=r.split(' ');
+          foot+='<button class="react">'+(ri===0?'↑':'🔖')+' <span>'+parts.slice(1).join(' ')+'</span></button>';
+        });
+        if(p.worth) foot+='<span class="worth">'+esc(p.worth)+'</span>';
+      }
+      foot+='</div>';
+      c.innerHTML=head+body+foot;
+
+      c.addEventListener('click',function(){ touch(key+i); });
+      feedEl.appendChild(c);
+    });
+
+    if(openedCount>=DAILY){ showDone(); }
+  }
+
+  function touch(id){
+    if(opened[id]) return;
+    opened[id]=true; openedCount++;
+    updateMeter();
+    if(openedCount>=DAILY) showDone();
+  }
+
+  function updateMeter(){
+    var pct=Math.min(100, 12 + (openedCount/DAILY)*88);
+    meterFill.style.width=pct+'%';
+    var mins=6+openedCount*2;
+    meterTxt.textContent=(openedCount>=DAILY?'done':mins+' min');
+  }
+
+  function showDone(){
+    if(document.getElementById('reset')) return;
+    var d=document.createElement('div');
+    d.className='done';
+    d.innerHTML='<div class="big">✦ That\'s a wrap for today</div><p>You\'ve seen the good stuff. Lumora won\'t invent more to keep you scrolling.<br>Go build, cook, call someone. We\'ll be here tomorrow.</p><button class="btn ghost" id="reset">Reset the demo</button>';
+    feedEl.appendChild(d);
+    var rb=d.querySelector('#reset');
+    rb.addEventListener('click',function(){ opened={};openedCount=0;updateMeter();select(current,document.querySelector('.tab[data-key="'+current+'"]')); });
+  }
+
+  var current='spark';
+  function select(key,btn){
+    current=key;
+    Array.prototype.forEach.call(tabsEl.children,function(b){b.setAttribute('aria-selected', b===btn?'true':'false');});
+    render(key);
+  }
+
+  updateMeter();
+  select('spark', tabsEl.children[0]);
+
+  /* ---------- best-of grid ---------- */
+  var BEST=[
+    {ico:'in',name:'LinkedIn',src:'the professional one',kept:'Real expertise and a reason to show up as your true self.',dropped:'Humble-brag theatre and cold-DM spam dressed as networking.'},
+    {ico:'𝕏',name:'Twitter / X',src:'the fast one',kept:'A single clean thought can travel far on merit alone.',dropped:'Dunk culture, outrage ranking, and the bottomless scroll.'},
+    {ico:'✈',name:'Telegram',src:'the group one',kept:'Fast, private, well-run rooms and channels you control.',dropped:'Unmoderated chaos and the firehose of 5,000-person groups.'},
+    {ico:'f',name:'Facebook',src:'the everyone one',kept:'Finding your people — events, local life, old friends.',dropped:'Ad-stuffed feeds and engagement bait from strangers.'},
+    {ico:'◎',name:'Instagram',src:'the visual one',kept:'The joy of sharing something you actually made or saw.',dropped:'Like-count anxiety and the endless beauty-filter arms race.'},
+    {ico:'✦',name:'Lumora adds',src:'the honest one',kept:'A daily "enough for today" that respects your time.',dropped:'The whole business model that profits from your attention.'}
+  ];
+  var bg=document.getElementById('bestGrid');
+  BEST.forEach(function(b){
+    var el=document.createElement('div'); el.className='kcard';
+    el.innerHTML='<h3><span class="ava" style="width:28px;height:28px;font-size:.8rem;background:'+(b.name.indexOf('Lumora')>=0?'linear-gradient(135deg,var(--accent),var(--violet))':'var(--ink)')+'">'+b.ico+'</span>'+b.name+'</h3>'+
+      '<span class="src">'+b.src+'</span>'+
+      '<div class="kept"><span class="m">keep</span><span>'+b.kept+'</span></div>'+
+      '<div class="dropped"><span class="m">drop</span><span>'+b.dropped+'</span></div>';
+    bg.appendChild(el);
+  });
+
+  /* ---------- principles ---------- */
+  var PRIN=[
+    {n:'01',h:'Finite by default',p:'Every feed has a bottom. When you\'ve seen the day\'s best, it tells you — instead of inventing more to keep you hooked.'},
+    {n:'02',h:'No vanity scoreboard',p:'No public like counts, no follower flex. Reactions are private signals of "this helped me", not a popularity contest.'},
+    {n:'03',h:'Ranked by worth, shown in order',p:'You always see posts in time order. "Found useful" surfaces quality — nothing is secretly reordered to provoke you.'},
+    {n:'04',h:'You are not the product',p:'Funded by a simple membership, not by auctioning your attention. No surveillance ads means no reason to trap you.'}
+  ];
+  var pr=document.getElementById('prin');
+  PRIN.forEach(function(x){
+    var el=document.createElement('div'); el.className='pitem';
+    el.innerHTML='<span class="pnum">'+x.n+'</span><h3>'+x.h+'</h3><p>'+x.p+'</p>';
+    pr.appendChild(el);
+  });
+
+})();
+</script>
+</body>
+</html>
